@@ -28,6 +28,7 @@
 }
 
 .navbar {
+  min-width: 600px;
   background-color: var(--main);
   display: flex;
   align-items: center;
@@ -97,7 +98,8 @@ li a:hover::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 90vh;
+  min-height: 100vh;
+  min-width: 600px;
   padding: 0 10px;
   background: var(--main);
 }
@@ -221,4 +223,14 @@ form button:hover {
 
 .result{
   margin-top: 1rem;
+}
+
+footer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  color: var(--white);
+  background-color: var(--main);
+  border-top: 2px solid var(--white);
 }

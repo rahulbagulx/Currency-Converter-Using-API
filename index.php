@@ -126,9 +126,15 @@ if (isset($_POST['submit'])) {
             </form>
         </div>
     </div>
-
+    
+    <footer>
+        <p>
+        © 2024 Currency Converter. All rights reserved.
+        </p>
+    </footer>
     <script src="js/country-list.js"></script>
     <script src="js/script.js"></script>
+
 
 </body>
 
