@@ -1,0 +1,109 @@
+/* Import Google Font - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/*===========================================
+   All Properties Are Define  
+  ================================================*/
+
+:root {
+    --main: #675AFE;
+    --form-input_border: #999;
+    --option_bgcolor: #888;
+    --button_hover: #4534fe;
+    --white: #ffffff;
+    --black: #000000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    ::selection{
+      color: var(--white);
+      background-color: var(--main);
+    }
+}
+
+.parent{
+  height: 100vh;
+  background-color: var(--main);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.child{
+  width: 400px;
+  padding: 0 30px;
+  padding-bottom: 14px;
+  background-color: var(--white);
+  border-radius: 12px;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -ms-border-radius: 12px;
+  -o-border-radius: 12px;
+}
+
+.child header{
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  padding: 30px;
+}
+
+.input-group{
+  display: flex;
+  flex-direction: column;
+}
+
+input[type="text"],
+[type="password"],
+[type="email"]{
+  padding: 8px;
+  margin: 4px 0 8px 0;
+  font-size: 18px;
+  outline: none;
+  border: 1px solid var(--form-input_border);
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+
+  &:focus{
+    border: 2px solid var(--main);
+  }
+
+  
+}
+
+button{
+  width: 100%;
+  padding: 12px;
+  margin: 24px 0 4px 0;
+  font-size: 18px;
+  border: none;
+  color: var(--white);
+  background-color: var(--main);
+  border-radius: 12px;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -ms-border-radius: 12px;
+  -o-border-radius: 12px;
+
+  
+  &:hover{
+    background-color: var(--button_hover);
+    transition: ease-in 0.3s;
+    -webkit-transition: ease-in 0.3s;
+    -moz-transition: ease-in 0.3s;
+    -ms-transition: ease-in 0.3s;
+    -o-transition: ease-in 0.3s;
+}
+}
+
+form a{
+  color: #333333;
+}
