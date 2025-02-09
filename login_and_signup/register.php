@@ -13,51 +13,67 @@
     session_start(); // Start the session
 
     if (isset($_POST['submit'])) {
-        $username = $_POST['username'];
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash the password
-        $email = $_POST['email'];
+        // Collect and trim input data
+        $username = trim($_POST['username']);
+        $password = password_hash(trim($_POST['password']), PASSWORD_DEFAULT); // Hash the password
+        $email = trim($_POST['email']);
 
-        // Database connection
-        $con = mysqli_connect("localhost", "root", "", "currency_converter");
-        if (!$con) {
-            die("Connection failed: " . mysqli_connect_error());
+        // Initialize an error message variable
+        $error = '';
+
+        // Validate inputs
+        if (empty($username) || empty($password) || empty($email)) {
+            $error = "All fields are required.";
+        } elseif (preg_match('/^\s*$/', $username) || preg_match('/^\s*$/', $password) || preg_match('/^\s*$/', $email)) {
+            $error = "Fields cannot be just whitespace.";
         }
 
-        // Check if username already exists
-        $stmt = $con->prepare("SELECT * FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        // Proceed only if there are no validation errors
+        if (empty($error)) {
+            // Database connection
+            $con = mysqli_connect("localhost", "root", "", "currency_converter");
+            if (!$con) {
+                die("Connection failed: " . mysqli_connect_error());
+            }
 
-        if ($result->num_rows > 0) {
-            echo "<script>alert('Username already taken. Please choose another one.');</script>";
-        } else {
-            // Check if email already exists
-            $stmt = $con->prepare("SELECT * FROM users WHERE email = ?");
-            $stmt->bind_param("s", $email);
+            // Check if username already exists
+            $stmt = $con->prepare("SELECT * FROM users WHERE username = ?");
+            $stmt->bind_param("s", $username);
             $stmt->execute();
             $result = $stmt->get_result();
 
             if ($result->num_rows > 0) {
-                echo "<script>alert('Email already taken. Please choose another one.');</script>";
+                echo "<script>alert('Username already taken. Please choose another one.');</script>";
             } else {
-                // Email and username do not exist, proceed with registration
-                $stmt = $con->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
-                $stmt->bind_param("sss", $username, $password, $email);
+                // Check if email already exists
+                $stmt = $con->prepare("SELECT * FROM users WHERE email = ?");
+                $stmt->bind_param("s", $email);
+                $stmt->execute();
+                $result = $stmt->get_result();
 
-                if ($stmt->execute()) {
-                    echo "<script>alert('User registered successfully!');</script>";
-                    header("Location: login.php"); // Redirect to login page after successful registration
-                    exit();
+                if ($result->num_rows > 0) {
+                    echo "<script>alert('Email already taken. Please choose another one.');</script>";
                 } else {
-                    echo "<script>alert('Registration failed. Please try again.');</script>";
+                    // Email and username do not exist, proceed with registration
+                    $stmt = $con->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
+                    $stmt->bind_param("sss", $username, $password, $email);
+
+                    if ($stmt->execute()) {
+                        echo "<script>alert('User registered successfully!');</script>";
+                        header("Location: login.php"); // Redirect to login page after successful registration
+                        exit();
+                    } else {
+                        echo "<script>alert('Registration failed. Please try again.');</script>";
+                    }
                 }
             }
-        }
 
-        // Close statement and connection
-        $stmt->close();
-        mysqli_close($con);
+            // Close statement and connection
+            $stmt->close();
+            mysqli_close($con);
+        } else {
+            echo "<script>alert('$error');</script>"; // Show validation error
+        }
     }
     ?>
 

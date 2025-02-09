@@ -14,38 +14,54 @@
     session_start(); // Start the session
 
     if (isset($_POST['submit'])) {
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+        // Collect and trim input data
+        $username = trim($_POST['username']);
+        $password = trim($_POST['password']);
 
-        // Database connection
-        $con = mysqli_connect("localhost", "root", "", "currency_converter");
-        if (!$con) {
-            die("Connection failed: " . mysqli_connect_error());
+        // Initialize an error message variable
+        $error = '';
+
+        // Validate inputs
+        if (empty($username) || empty($password)) {
+            $error = "Username and password are required.";
+        } elseif (preg_match('/^\s*$/', $username) || preg_match('/^\s*$/', $password)) {
+            $error = "Username and password cannot be just whitespace.";
         }
 
-        // Prepared statement to prevent SQL injection
-        $stmt = $con->prepare("SELECT id, password FROM users WHERE username=?");
-        $stmt->bind_param("s", $username);
-
-        if ($stmt->execute()) {
-            $result = $stmt->get_result();
-            if ($result->num_rows > 0) {
-                $row = $result->fetch_assoc();
-                // Verify the password
-                if (password_verify($password, $row['password'])) {
-                    $_SESSION['user_id'] = $row['id']; // Store user ID in session
-                    echo "<script>alert('Login successful!'); window.location.href='../index.php';</script>"; // Redirect to main page after successful login
-                    exit();
-                } else {
-                    echo "<script>alert('Invalid username or password. Please try again.');</script>";
-                }
-            } else {
-                echo "<script>alert('User not found.');</script>";
+        // Proceed only if there are no validation errors
+        if (empty($error)) {
+            // Database connection
+            $con = mysqli_connect("localhost", "root", "", "currency_converter");
+            if (!$con) {
+                die("Connection failed: " . mysqli_connect_error());
             }
-        }
 
-        $stmt->close();
-        mysqli_close($con);
+            // Prepared statement to prevent SQL injection
+            $stmt = $con->prepare("SELECT id, password FROM users WHERE username=?");
+            $stmt->bind_param("s", $username);
+
+            if ($stmt->execute()) {
+                $result = $stmt->get_result();
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    // Verify the password
+                    if (password_verify($password, $row['password'])) {
+                        $_SESSION['user_id'] = $row['id']; // Store user ID in session
+                        echo "<script>alert('Login successful!'); window.location.href='../index.php';</script>"; // Redirect to main page after successful login
+                        exit();
+                    } else {
+                        echo "<script>alert('Invalid username or password. Please try again.');</script>";
+                    }
+                } else {
+                    echo "<script>alert('User not found.');</script>";
+                }
+            }
+
+            $stmt->close();
+            mysqli_close($con);
+        } else {
+            echo "<script>alert('$error');</script>"; // Show validation error
+        }
     }
     ?>
 
@@ -60,7 +76,6 @@
                 <div class="input-group">
                     <label>Password:</label>
                     <input type="password" name="password" required>
-
                 </div>
 
                 <button name="submit">Login</button>
